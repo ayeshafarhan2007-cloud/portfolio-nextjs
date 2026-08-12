@@ -1,4 +1,5 @@
 import Link from "next/link";
+import LazyAIChat from "../components/LazyAIChat";
 
 export default function Home() {
   return (
@@ -10,7 +11,7 @@ export default function Home() {
         fontFamily: "Arial, sans-serif",
       }}
     >
-      {/* Hero */}
+      {/* Hero Section */}
       <section style={{ textAlign: "center", padding: "40px 0" }}>
         <h1 style={{ fontSize: "54px", marginBottom: "10px" }}>
           Hi, I'm Ayesha 👋
@@ -35,8 +36,8 @@ export default function Home() {
           }}
         >
           I enjoy building modern web applications using React, Next.js and AI
-          technologies. This portfolio showcases my projects, technical skills
-          and learning journey.
+          technologies. This portfolio showcases my projects, technical skills,
+          certificates, and development journey.
         </p>
 
         <div
@@ -73,8 +74,7 @@ export default function Home() {
 
       <hr style={{ margin: "50px 0" }} />
 
-      {/* Skills */}
-
+      {/* Skills Section */}
       <section>
         <h2 style={{ textAlign: "center" }}>Technical Skills</h2>
 
@@ -118,13 +118,15 @@ export default function Home() {
 
       <hr style={{ margin: "50px 0" }} />
 
-      <section style={{ textAlign: "center" }}>
+      {/* AI Assistant */}
+      <section style={{ marginTop: "50px" }}>
         <h2>🤖 AI Portfolio Assistant</h2>
 
         <p>
-          My AI assistant is currently being integrated and will soon answer
-          questions about my projects, skills and experience.
+          Ask me about my projects, technical skills, certificates or experience.
         </p>
+
+        <LazyAIChat />
       </section>
     </main>
   );

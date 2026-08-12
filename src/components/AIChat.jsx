@@ -4,78 +4,226 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 
 export default function AIChat() {
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, status, error } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
     }),
   });
 
+  const exampleQuestions = [
+    "Which project best demonstrates React?",
+    "Which project is most relevant to AI development?",
+    "What frontend skills does Ayesha have?",
+  ];
+
+  function handleQuestion(question) {
+    sendMessage({
+      text: question,
+    });
+  }
+
   return (
-    <div
+    <section
+      aria-labelledby="ai-explorer-heading"
       style={{
-        maxWidth: "600px",
+        maxWidth: "700px",
         margin: "40px auto",
-        padding: "20px",
+        padding: "24px",
         border: "1px solid #ddd",
-        borderRadius: "12px",
+        borderRadius: "16px",
+        background: "#fafafa",
       }}
     >
-      <h2>🤖 AI Portfolio Assistant</h2>
+      {/* Introduction */}
+      <div style={{ marginBottom: "24px" }}>
+        <h2
+          id="ai-explorer-heading"
+          style={{ marginBottom: "8px" }}
+        >
+          🤖 AI Portfolio Explorer
+        </h2>
 
-      <p>
-        Ask me about Ayesha's projects, skills, and experience.
-      </p>
+        <p
+          style={{
+            margin: 0,
+            lineHeight: "1.6",
+            color: "#555",
+          }}
+        >
+          Not sure where to start? Tell me what you're looking for.
+          I'll recommend the most relevant projects and skills from
+          Ayesha's portfolio.
+        </p>
+      </div>
 
-      {messages.map((message) => (
-        <div key={message.id}>
+      {/* Example questions */}
+      <div style={{ marginBottom: "24px" }}>
+        <p
+          style={{
+            fontWeight: "bold",
+            marginBottom: "10px",
+          }}
+        >
+          Try asking:
+        </p>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
+          }}
+        >
+          {exampleQuestions.map((question) => (
+            <button
+              key={question}
+              type="button"
+              onClick={() => handleQuestion(question)}
+              disabled={status !== "ready"}
+              style={{
+                padding: "10px 14px",
+                textAlign: "left",
+                border: "1px solid #ccc",
+                borderRadius: "8px",
+                background: "white",
+                cursor: "pointer",
+              }}
+            >
+              {question}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Error message */}
+      {error && (
+        <div
+          role="alert"
+          style={{
+            marginBottom: "20px",
+            padding: "12px",
+            border: "1px solid #ccc",
+            borderRadius: "8px",
+            background: "#fff",
+          }}
+        >
           <strong>
-            {message.role === "user" ? "You:" : "AI:"}
+            ⚠️ AI Explorer temporarily unavailable
           </strong>
 
-          {message.parts.map((part, index) =>
-            part.type === "text" ? (
-              <p key={index}>{part.text}</p>
-            ) : null
-          )}
+          <p style={{ marginBottom: 0 }}>
+            The AI service is currently unavailable. You can still
+            browse Ayesha's projects and skills below.
+          </p>
         </div>
-      ))}
+      )}
 
+      {/* Conversation */}
+      <div
+        aria-live="polite"
+        aria-label="AI conversation"
+        style={{ marginBottom: "20px" }}
+      >
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            style={{
+              marginBottom: "16px",
+              padding: "12px",
+              borderRadius: "8px",
+              background:
+                message.role === "user" ? "#eee" : "#fff",
+              border: "1px solid #ddd",
+            }}
+          >
+            <strong>
+              {message.role === "user" ? "You:" : "AI:"}
+            </strong>
+
+            {message.parts.map((part, index) =>
+              part.type === "text" ? (
+                <p
+                  key={index}
+                  style={{ marginBottom: 0 }}
+                >
+                  {part.text}
+                </p>
+              ) : null
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Input form */}
       <form
         onSubmit={(e) => {
           e.preventDefault();
 
-          const input = e.target.message.value;
+          const input = e.target.message.value.trim();
 
-          console.log("Sending:", input);
+          if (!input) {
+            return;
+          }
 
-sendMessage({
-  text: input,
-});
+          sendMessage({
+            text: input,
+          });
 
           e.target.message.value = "";
         }}
       >
+        <label
+          htmlFor="ai-question"
+          style={{
+            display: "block",
+            marginBottom: "8px",
+            fontWeight: "bold",
+          }}
+        >
+          Ask about Ayesha's portfolio
+        </label>
+
         <input
+          id="ai-question"
           name="message"
-          placeholder="Ask about my projects..."
+          type="text"
+          placeholder="What are you looking for?"
+          aria-describedby="ai-question-help"
           style={{
             width: "100%",
-            padding: "10px",
-            marginTop: "15px",
+            padding: "12px",
+            border: "1px solid #ccc",
+            borderRadius: "8px",
+            boxSizing: "border-box",
           }}
         />
 
+        <p
+          id="ai-question-help"
+          style={{
+            marginTop: "6px",
+            fontSize: "14px",
+            color: "#666",
+          }}
+        >
+          Example: Ask which project demonstrates React or AI
+          development.
+        </p>
+
         <button
           type="submit"
+          disabled={status !== "ready"}
           style={{
             marginTop: "10px",
             padding: "10px 20px",
+            border: "none",
+            borderRadius: "8px",
+            cursor: "pointer",
           }}
-          disabled={status === "streaming"}
         >
-          {status === "streaming" ? "Thinking..." : "Send"}
+          {status === "streaming" ? "Thinking..." : "Explore"}
         </button>
       </form>
-    </div>
+    </section>
   );
 }
