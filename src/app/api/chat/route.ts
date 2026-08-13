@@ -4,7 +4,10 @@ import {
   convertToModelMessages,
   type UIMessage,
 } from "ai";
-
+console.log(
+  "OPENROUTER_API_KEY exists:",
+  Boolean(process.env.OPENROUTER_API_KEY)
+);
 const openrouter = createOpenAI({
   apiKey: process.env.OPENROUTER_API_KEY,
   baseURL: "https://openrouter.ai/api/v1",
